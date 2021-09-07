@@ -97,7 +97,7 @@ auto pega_tokens(string linha) {
 	}	
 	
 	ss >> operacao;
-	if(linha_sem_comentario.find(',') != string::npos && operacao == "COPY"){
+	if(linha_sem_comentario.find(',') != string::npos){
 		getline(ss, arg1,',');
 		
 		while(arg1[0] == ' ' || arg1[0] == '\t')
@@ -556,6 +556,71 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 	return tab_erros;
 }
 
+auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
+	string operacao = tokens[1], arg1 = tokens[2], arg2 = tokens[3];
+	int n_args = 0;
+	ItemTabelaDeErros erro;
+	if (!operacao.empty())
+	{
+		if (tab_op[operacao].opcode.empty() &&  operacao != "CONST" && operacao != "SECTION" && operacao != "SPACE")
+		{
+			erro.label = tokens[1];
+			erro.mensagem = "Erro Sintatico";
+			erro.linha = linha;
+			tab_erros.push_back(erro);
+		}
+		else 
+		{
+			if (!arg1.empty())
+			{
+				n_args++;
+			}
+			if (!arg2.empty())
+			{
+				n_args++;
+			}
+			if (operacao == "CONST")
+			{
+				if (n_args != 1)
+				{
+					erro.label = tokens[1];
+					erro.mensagem = "Erro Sintatico";
+					erro.linha = linha;
+					tab_erros.push_back(erro);
+				}
+			}
+			else if (operacao == "SECTION")
+			{
+				if (n_args != 1)
+				{
+					erro.label = tokens[1];
+					erro.mensagem = "Erro Sintatico";
+					erro.linha = linha;
+					tab_erros.push_back(erro);
+				}
+			}
+			else if (operacao == "SPACE")
+			{
+				if (n_args != 1)
+				{
+					erro.label = tokens[1];
+					erro.mensagem = "Erro Sintatico";
+					erro.linha = linha;
+					tab_erros.push_back(erro);
+				}
+			}
+			else if (n_args != tab_op[operacao].n_args)
+			{
+				erro.label = tokens[1];
+				erro.mensagem = "Erro Sintatico";
+				erro.linha = linha;
+				tab_erros.push_back(erro);
+			}
+		}
+	}
+	return tab_erros;
+}
+
 void gera_arquivo_obj(auto codigo_gerado, auto nome_arquivo){
 	auto pos = nome_arquivo.find('.');
 	string nome_obj = nome_arquivo.substr(0, pos);
@@ -602,6 +667,7 @@ int main(int argc, char* argv[]) {
     	tab_dados = atualiza_tab_dados(tokens,tab_dados);
     	codigo_gerado = gera_codigo_segmento_texto(codigo_gerado,tokens,tab_simb,tab_op);
     	tab_erros = analisador_lexico(tokens,tab_erros,contador_linha);
+    	tab_erros = analisador_sintatico(tokens,tab_erros,contador_linha,tab_op);
     	pc += tab_op[tokens[1]].memoria; 
     	contador_linha++;
     	/*cout << "L: "<<  linha << endl;
