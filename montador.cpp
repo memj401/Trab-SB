@@ -598,6 +598,13 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
+				else if (tokens[2] != "TEXT" && tokens[2] != "DATA")
+				{
+					erro.label = tokens[2];
+					erro.mensagem = "Erro Sintatico";
+					erro.linha = linha;
+					tab_erros.push_back(erro);
+				}
 			}
 			else if (operacao == "SPACE")
 			{
@@ -616,6 +623,94 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 				erro.linha = linha;
 				tab_erros.push_back(erro);
 			}
+		}
+	}
+	return tab_erros;
+}
+
+auto analisador_semantico(auto tokens,auto tab_erros,int linha,auto tab_simb){
+	ItemTabelaDeErros erro;
+	vector<ItemTabelaDeSimbolos>:: iterator it;
+	string rotulo = tokens[0], arg1 = tokens[2], arg2 = tokens[3];
+	int ind;
+	if (!tokens[6].empty())
+	{
+		erro.label = tokens[6];
+		erro.mensagem = "Erro Semantico";
+		erro.linha = linha;
+		tab_erros.push_back(erro);
+	}
+	if (!arg1.empty())
+	{
+		it = find_if(tab_simb.begin(),tab_simb.end(),[&arg1](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == arg1;});
+		ind = distance(tab_simb.begin(), it);
+		if (it != tab_simb.end())
+		{ 
+			if (!tab_simb[ind].def)
+			{
+				erro.label = arg1;
+				erro.mensagem = "Endr";
+				erro.linha = linha;
+				tab_erros.push_back(erro);
+			}
+		}
+	}
+	if (!arg2.empty())
+	{
+		it = find_if(tab_simb.begin(),tab_simb.end(),[&arg2](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == arg2;});
+		ind = distance(tab_simb.begin(), it);
+		if (it == tab_simb.end() || (!tab_simb[ind].def))
+		{
+			erro.label = arg2;
+			erro.mensagem = "Endr";
+			erro.linha = linha;
+			tab_erros.push_back(erro);
+		}
+	}
+	return tab_erros;
+}
+
+auto verifica_rotulo_duplicado(auto tokens,auto tab_erros,int linha,auto tab_simb){
+	ItemTabelaDeErros erro;
+	string rotulo = tokens[0];
+	if (!rotulo.empty())
+	{
+		auto it = find_if(tab_simb.begin(),tab_simb.end(),[&rotulo](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == rotulo;});
+		int ind = distance(tab_simb.begin(), it);
+		if (it != tab_simb.end() && (tab_simb[ind].def))
+		{
+			erro.label = rotulo;
+			erro.mensagem = "Erro Semantico";
+			erro.linha = linha;
+			tab_erros.push_back(erro);
+		}
+	}
+	return tab_erros;
+}
+
+auto corrige_rotulo_ausente(auto tab_erros,auto tab_simb){
+	auto it =  begin(tab_erros);
+	string label;
+	while (it != end(tab_erros))
+	{
+		if ((*it).mensagem == "Endr")
+		{
+			label = (*it).label;
+			auto it2 = find_if(tab_simb.begin(),tab_simb.end(),[&label](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == label;});
+			int ind = distance(tab_simb.begin(), it2);
+			if (tab_simb[ind].def)
+			{
+				it = tab_erros.erase(it);
+			}
+			else
+			{
+				(*it).mensagem = "Erro Semantico";
+				it++;
+			}
+		}
+		else
+		{
+			it++;
 		}
 	}
 	return tab_erros;
@@ -662,12 +757,13 @@ int main(int argc, char* argv[]) {
     			contador_linha++;
     		}
     	}
-
+    	tab_erros = verifica_rotulo_duplicado(tokens,tab_erros,contador_linha,tab_simb);
     	tab_simb = atualiza_tab_simb(tokens,tab_op,tab_simb,pc);
     	tab_dados = atualiza_tab_dados(tokens,tab_dados);
     	codigo_gerado = gera_codigo_segmento_texto(codigo_gerado,tokens,tab_simb,tab_op);
     	tab_erros = analisador_lexico(tokens,tab_erros,contador_linha);
     	tab_erros = analisador_sintatico(tokens,tab_erros,contador_linha,tab_op);
+    	tab_erros = analisador_semantico(tokens,tab_erros,contador_linha,tab_simb);
     	pc += tab_op[tokens[1]].memoria; 
     	contador_linha++;
     	/*cout << "L: "<<  linha << endl;
@@ -678,6 +774,7 @@ int main(int argc, char* argv[]) {
     	  "Off1: " <<  tokens[4] +  '\n'<< "Off2: " << tokens[5] +  '\n' << endl;*/
 	}
 	tab_simb = corrige_endr_tab_simb(pc,tab_simb,tab_dados);
+	tab_erros = corrige_rotulo_ausente(tab_erros,tab_simb);
 	codigo_gerado = corrige_endr_codigo_segmento_texto(codigo_gerado,tab_simb);
 	codigo_gerado = gera_codigo_completo(codigo_gerado,tab_simb,tab_dados);
 	gera_arquivo_obj(codigo_gerado,nome_arquivo);
@@ -719,9 +816,8 @@ int main(int argc, char* argv[]) {
 		cout << "Rotulo:" << it.label << endl;
 		cout << "Tipo de Erro:" << it.mensagem << endl;
 		cout << "Linha:" << it.linha << endl;
+		cout << endl;
 	}
-	cout << endl << endl;
-
 	arquivo.close();
     return 0;
 }
