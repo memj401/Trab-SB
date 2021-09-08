@@ -158,7 +158,7 @@ auto pega_tokens(string linha) {
 	return tokens;
 }
 
-auto atualiza_tab_simb(auto tokens, auto tab_op, auto tab_simb,int pc){
+auto atualiza_tab_simb(auto tokens, auto tab_op, auto tab_simb,int pc, int *pos_ordem){
 	bool encontrou_simb;
 	int ind;
 	vector <ItemTabelaDeSimbolos>::iterator it; 
@@ -192,6 +192,8 @@ auto atualiza_tab_simb(auto tokens, auto tab_op, auto tab_simb,int pc){
 			{
 				tab_simb[ind].def = true;
 				tab_simb[ind].endr = pc;
+				iter_swap(tab_simb.begin() + (*pos_ordem),tab_simb.begin() + ind);
+				(*pos_ordem) += 1;
 			}
 		}
 	}
@@ -401,21 +403,21 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 		if (tokens[0].size() > 50)
 		{
 			erro.label = tokens[0];
-			erro.mensagem = "Erro Lexico (Label com  mais de 50 caracteres)";
+			erro.mensagem = "Erro Lexico (Token com  mais de 50 caracteres)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (tokens[0].find_first_not_of(caracteres_aceitos) != string::npos)
 		{
 			erro.label = tokens[0];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (isdigit(tokens[0][0]))
 		{
 			erro.label = tokens[0];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -425,21 +427,21 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 		if (tokens[1].size() > 50)
 		{
 			erro.label = tokens[1];
-			erro.mensagem = "Erro Lexico (Label com  mais de 50 caracteres)";
+			erro.mensagem = "Erro Lexico (Token com  mais de 50 caracteres)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (tokens[1].find_first_not_of(caracteres_aceitos) != string::npos)
 		{
 			erro.label = tokens[1];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (isdigit(tokens[1][0]))
 		{
 			erro.label = tokens[1];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -449,7 +451,7 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 		if (tokens[2].size() > 50)
 		{
 			erro.label = tokens[2];
-			erro.mensagem = "Erro Lexico (Label com  mais de 50 caracteres)";
+			erro.mensagem = "Erro Lexico (Token com  mais de 50 caracteres)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -467,7 +469,7 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 				if (teve_erro)
 				{
 					erro.label = tokens[2];
-					erro.mensagem = "Erro Lexico";
+					erro.mensagem = "Erro Lexico (Token Invalido)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
@@ -475,7 +477,7 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 			else
 			{
 				erro.label = tokens[2];
-				erro.mensagem = "Erro Lexico";
+				erro.mensagem = "Erro Lexico (Token Invalido)";
 				erro.linha = linha;
 				tab_erros.push_back(erro);
 			}	
@@ -490,7 +492,7 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 			{
 				
 				erro.label = tokens[2];
-				erro.mensagem = "Erro Lexico";
+				erro.mensagem = "Erro Lexico (Token Invalido)";
 				erro.linha = linha;
 				tab_erros.push_back(erro);
 			}	
@@ -501,14 +503,14 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 		if (tokens[3].size() > 50)
 		{
 			erro.label = tokens[3];
-			erro.mensagem = "Erro Lexico (Label com  mais de 50 caracteres)";
+			erro.mensagem = "Erro Lexico (Token com  mais de 50 caracteres)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (isdigit(tokens[3][0]))
 		{
 			erro.label = tokens[3];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -522,7 +524,7 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 			{
 				
 				erro.label = tokens[3];
-				erro.mensagem = "Erro Lexico";
+				erro.mensagem = "Erro Lexico (Token Invalido)";
 				erro.linha = linha;
 				tab_erros.push_back(erro);
 
@@ -534,21 +536,21 @@ auto analisador_lexico(auto tokens, auto tab_erros, int linha){
 		if (tokens[6].size() > 50)
 		{
 			erro.label = tokens[6];
-			erro.mensagem = "Erro Lexico (Label com  mais de 50 caracteres)";
+			erro.mensagem = "Erro Lexico (Token com  mais de 50 caracteres)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (tokens[6].find_first_not_of(caracteres_aceitos) != string::npos)
 		{
 			erro.label = tokens[6];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
 		else if (isdigit(tokens[6][0]))
 		{
 			erro.label = tokens[6];
-			erro.mensagem = "Erro Lexico";
+			erro.mensagem = "Erro Lexico (Token Invalido)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -560,12 +562,19 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 	string operacao = tokens[1], arg1 = tokens[2], arg2 = tokens[3];
 	int n_args = 0;
 	ItemTabelaDeErros erro;
+	if (!tokens[6].empty())
+	{
+		erro.label = tokens[6];
+		erro.mensagem = "Erro Sintatico (Dois Rótulos na Mesma Linha)";
+		erro.linha = linha;
+		tab_erros.push_back(erro);
+	}
 	if (!operacao.empty())
 	{
 		if (tab_op[operacao].opcode.empty() &&  operacao != "CONST" && operacao != "SECTION" && operacao != "SPACE")
 		{
 			erro.label = tokens[1];
-			erro.mensagem = "Erro Sintatico";
+			erro.mensagem = "Erro Sintatico (Operacao/Diretiva Invalida)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -584,7 +593,7 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 				if (n_args != 1)
 				{
 					erro.label = tokens[1];
-					erro.mensagem = "Erro Sintatico";
+					erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
@@ -594,24 +603,24 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 				if (n_args != 1)
 				{
 					erro.label = tokens[1];
-					erro.mensagem = "Erro Sintatico";
+					erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
 				else if (tokens[2] != "TEXT" && tokens[2] != "DATA")
 				{
 					erro.label = tokens[2];
-					erro.mensagem = "Erro Sintatico";
+					erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
 			}
 			else if (operacao == "SPACE")
 			{
-				if (n_args != 1)
+				if (n_args != 1 && n_args != 0)
 				{
 					erro.label = tokens[1];
-					erro.mensagem = "Erro Sintatico";
+					erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
@@ -619,7 +628,7 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 			else if (n_args != tab_op[operacao].n_args)
 			{
 				erro.label = tokens[1];
-				erro.mensagem = "Erro Sintatico";
+				erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
 				erro.linha = linha;
 				tab_erros.push_back(erro);
 			}
@@ -633,13 +642,6 @@ auto analisador_semantico(auto tokens,auto tab_erros,int linha,auto tab_simb){
 	vector<ItemTabelaDeSimbolos>:: iterator it;
 	string rotulo = tokens[0], arg1 = tokens[2], arg2 = tokens[3];
 	int ind;
-	if (!tokens[6].empty())
-	{
-		erro.label = tokens[6];
-		erro.mensagem = "Erro Semantico";
-		erro.linha = linha;
-		tab_erros.push_back(erro);
-	}
 	if (!arg1.empty())
 	{
 		it = find_if(tab_simb.begin(),tab_simb.end(),[&arg1](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == arg1;});
@@ -680,7 +682,7 @@ auto verifica_rotulo_duplicado(auto tokens,auto tab_erros,int linha,auto tab_sim
 		if (it != tab_simb.end() && (tab_simb[ind].def))
 		{
 			erro.label = rotulo;
-			erro.mensagem = "Erro Semantico";
+			erro.mensagem = "Erro Semantico (Rotulo Duplicado)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
 		}
@@ -704,7 +706,7 @@ auto corrige_rotulo_ausente(auto tab_erros,auto tab_simb){
 			}
 			else
 			{
-				(*it).mensagem = "Erro Semantico";
+				(*it).mensagem = "Erro Semantico (Rotulo Ausente)";
 				it++;
 			}
 		}
@@ -733,7 +735,8 @@ int main(int argc, char* argv[]) {
     ifstream arquivo(nome_arquivo);
     string linha;
 	
-	int pc = 0, contador_linha = 1;     
+	int pc = 0, contador_linha = 1;
+	int pos_ordem = 0;     
     vector <string> tokens, tokens_aux;
 	
 	map <string, ItemTabelaDeOperacoes> tab_op;
@@ -747,7 +750,7 @@ int main(int argc, char* argv[]) {
     
     while (getline (arquivo, linha)) {
     	tokens  = pega_tokens(linha);
-    	if ((!(tokens[0].empty()))&& (tokens[1].empty()) && (tokens[2].empty()) && (tokens[3].empty()))
+    	if ((!(tokens[0].empty())) && (tokens[1].empty()) && (tokens[2].empty()) && (tokens[3].empty()))
     	{
     		getline(arquivo,linha);
     		tokens_aux = pega_tokens(linha);
@@ -758,7 +761,7 @@ int main(int argc, char* argv[]) {
     		}
     	}
     	tab_erros = verifica_rotulo_duplicado(tokens,tab_erros,contador_linha,tab_simb);
-    	tab_simb = atualiza_tab_simb(tokens,tab_op,tab_simb,pc);
+    	tab_simb = atualiza_tab_simb(tokens,tab_op,tab_simb,pc,&pos_ordem);
     	tab_dados = atualiza_tab_dados(tokens,tab_dados);
     	codigo_gerado = gera_codigo_segmento_texto(codigo_gerado,tokens,tab_simb,tab_op);
     	tab_erros = analisador_lexico(tokens,tab_erros,contador_linha);
@@ -770,7 +773,7 @@ int main(int argc, char* argv[]) {
 		cout << endl;*/
 		
     	/*cout << "Rot: " << tokens[0] +  '\n' <<"OP: " << tokens[1] +  '\n' <<
-    	 "Arg1: " <<  tokens[2] +  '\n' <<"Arg2: " <<  tokens[3] +  '\n' <<
+    	 "Arg1: " <<  tokens[2] +  '\n' << "Arg2: " <<  tokens[3] +  '\n' <<
     	  "Off1: " <<  tokens[4] +  '\n'<< "Off2: " << tokens[5] +  '\n' << endl;*/
 	}
 	tab_simb = corrige_endr_tab_simb(pc,tab_simb,tab_dados);
@@ -803,8 +806,9 @@ int main(int argc, char* argv[]) {
 		cout << "Rotulo: " << it.first << endl;
 		cout << "Tipo: " << it.second.tipo << endl;
 		cout << "Valor: " << it.second.valor << endl;
+		cout << endl;
 	}
-	cout << endl << endl;
+	cout << endl;
 	cout <<"Codigo Gerado: " << endl;
 
 	for(auto it : codigo_gerado){
