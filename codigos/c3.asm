@@ -1,0 +1,16 @@
+SECTION TEXT
+INPUT base
+INPUT altura
+load BASE
+Mult altura
+div dois
+STORE area
+OUTPUT area
+STOP
+SECTION DATA
+BASE: SPACE
+ALTURA: SPACE 
+AREA: SPACE
+DOIS: CONST 2
+
+
