@@ -195,6 +195,11 @@ auto atualiza_tab_simb(auto tokens, auto tab_op, auto tab_simb,int pc, int *pos_
 				iter_swap(tab_simb.begin() + (*pos_ordem),tab_simb.begin() + ind);
 				(*pos_ordem) += 1;
 			}
+			else
+			{
+				tab_simb[ind].def = true;
+				tab_simb[ind].endr = pc;
+			}
 		}
 	}
 	if (!tokens[2].empty())
@@ -364,7 +369,10 @@ auto corrige_endr_codigo_segmento_texto(auto codigo_gerado, auto tab_simb){
 			{
 				endr += it.lista_pendencia_off[i];
 			}
-			codigo_gerado[it.lista_pendencia[i]] = to_string(endr);
+			if (it.lista_pendencia[i] < codigo_gerado.size())
+			{
+				codigo_gerado[it.lista_pendencia[i]] = to_string(endr);
+			}	
 		}
 	}
 	return codigo_gerado;	
@@ -565,7 +573,7 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 	if (!tokens[6].empty())
 	{
 		erro.label = tokens[6];
-		erro.mensagem = "Erro Sintatico (Dois Rótulos na Mesma Linha)";
+		erro.mensagem = "Erro Sintatico (Dois Rotulos na Mesma Linha)";
 		erro.linha = linha;
 		tab_erros.push_back(erro);
 	}
@@ -610,7 +618,7 @@ auto analisador_sintatico(auto tokens, auto tab_erros,int linha,auto tab_op){
 				else if (tokens[2] != "TEXT" && tokens[2] != "DATA")
 				{
 					erro.label = tokens[2];
-					erro.mensagem = "Erro Sintatico (Quantidade de Operandos Errada)";
+					erro.mensagem = "Erro Sintatico (Operacao/Diretiva Invalida)";
 					erro.linha = linha;
 					tab_erros.push_back(erro);
 				}
@@ -747,7 +755,6 @@ int main(int argc, char* argv[]) {
 	vector<string> codigo_gerado;
 	
 	tab_op = inicia_tabela_op();
-    
     while (getline (arquivo, linha)) {
     	tokens  = pega_tokens(linha);
     	if ((!(tokens[0].empty())) && (tokens[1].empty()) && (tokens[2].empty()) && (tokens[3].empty()))
@@ -769,58 +776,19 @@ int main(int argc, char* argv[]) {
     	tab_erros = analisador_semantico(tokens,tab_erros,contador_linha,tab_simb);
     	pc += tab_op[tokens[1]].memoria; 
     	contador_linha++;
-    	/*cout << "L: "<<  linha << endl;
-		cout << endl;*/
-		
-    	/*cout << "Rot: " << tokens[0] +  '\n' <<"OP: " << tokens[1] +  '\n' <<
-    	 "Arg1: " <<  tokens[2] +  '\n' << "Arg2: " <<  tokens[3] +  '\n' <<
-    	  "Off1: " <<  tokens[4] +  '\n'<< "Off2: " << tokens[5] +  '\n' << endl;*/
 	}
 	tab_simb = corrige_endr_tab_simb(pc,tab_simb,tab_dados);
 	tab_erros = corrige_rotulo_ausente(tab_erros,tab_simb);
 	codigo_gerado = corrige_endr_codigo_segmento_texto(codigo_gerado,tab_simb);
 	codigo_gerado = gera_codigo_completo(codigo_gerado,tab_simb,tab_dados);
 	gera_arquivo_obj(codigo_gerado,nome_arquivo);
-	
-	for (auto i: tab_simb)
-	{
-		cout << "Simbolo: " << i.simb << endl;
-		cout << "Endereco: " << i.endr << endl;
-		cout << "Definido: " << i.def << endl;
-		cout << "Lista de Pendencia: ";
-		for (auto j: i.lista_pendencia)
-		{
-			cout << "->" << j << " ";
-		}
-		cout << endl;
-		cout << "Lista de Pendencia Offset: ";
-		for (auto k: i.lista_pendencia_off)
-		{
-			cout << "->" << k << " ";
-		}
-		cout << endl;
-		cout << endl;
-	}
-	for (auto it : tab_dados)
-	{
-		cout << "Rotulo: " << it.first << endl;
-		cout << "Tipo: " << it.second.tipo << endl;
-		cout << "Valor: " << it.second.valor << endl;
-		cout << endl;
-	}
 	cout << endl;
-	cout <<"Codigo Gerado: " << endl;
-
-	for(auto it : codigo_gerado){
-		cout << it << ' ';
-	}
-	cout << endl << endl;
-	for (auto it : tab_erros)
+	if (tab_erros.size() > 0)
 	{
-		cout << "Rotulo:" << it.label << endl;
-		cout << "Tipo de Erro:" << it.mensagem << endl;
-		cout << "Linha:" << it.linha << endl;
-		cout << endl;
+		for (auto it : tab_erros)
+		{
+			cout << it.mensagem << " em \"" << it.label << "\"" << " - Linha " << it.linha << endl;  
+		}
 	}
 	arquivo.close();
     return 0;
