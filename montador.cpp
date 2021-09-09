@@ -683,11 +683,14 @@ auto analisador_semantico(auto tokens,auto tab_erros,int linha,auto tab_simb){
 auto verifica_rotulo_duplicado(auto tokens,auto tab_erros,int linha,auto tab_simb){
 	ItemTabelaDeErros erro;
 	string rotulo = tokens[0];
+	string rotulo_extra = tokens[6];
 	if (!rotulo.empty())
 	{
 		auto it = find_if(tab_simb.begin(),tab_simb.end(),[&rotulo](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == rotulo;});
 		int ind = distance(tab_simb.begin(), it);
-		if (it != tab_simb.end() && (tab_simb[ind].def))
+		auto it2 = find_if(tab_simb.begin(),tab_simb.end(),[&rotulo_extra](const ItemTabelaDeSimbolos tab_item){return tab_item.simb == rotulo_extra;});
+		int ind2 = distance(tab_simb.begin(), it);
+		if (it != tab_simb.end() && (tab_simb[ind].def) || it2 != tab_simb.end() && (tab_simb[ind2].def) || rotulo == rotulo_extra)
 		{
 			erro.label = rotulo;
 			erro.mensagem = "Erro Semantico (Rotulo Duplicado)";
@@ -766,6 +769,7 @@ int main(int argc, char* argv[]) {
     			tokens[i] = tokens_aux[i];
     			contador_linha++;
     		}
+    		tokens[6] = tokens_aux[0];
     	}
     	tab_erros = verifica_rotulo_duplicado(tokens,tab_erros,contador_linha,tab_simb);
     	tab_simb = atualiza_tab_simb(tokens,tab_op,tab_simb,pc,&pos_ordem);
