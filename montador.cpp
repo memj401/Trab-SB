@@ -692,7 +692,14 @@ auto verifica_rotulo_duplicado(auto tokens,auto tab_erros,int linha,auto tab_sim
 		int ind2 = distance(tab_simb.begin(), it);
 		if (it != tab_simb.end() && (tab_simb[ind].def) || it2 != tab_simb.end() && (tab_simb[ind2].def) || rotulo == rotulo_extra)
 		{
-			erro.label = rotulo;
+			if (it2 != tab_simb.end() && (tab_simb[ind2].def))
+			{
+				erro.label = rotulo_extra;			
+			}
+			else
+			{	
+				erro.label = rotulo;
+			}
 			erro.mensagem = "Erro Semantico (Rotulo Duplicado)";
 			erro.linha = linha;
 			tab_erros.push_back(erro);
@@ -767,8 +774,8 @@ int main(int argc, char* argv[]) {
     		for (int i = 1; i < tokens_aux.size(); ++i)
     		{
     			tokens[i] = tokens_aux[i];
-    			contador_linha++;
     		}
+    		contador_linha++;
     		tokens[6] = tokens_aux[0];
     	}
     	tab_erros = verifica_rotulo_duplicado(tokens,tab_erros,contador_linha,tab_simb);
