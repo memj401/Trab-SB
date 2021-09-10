@@ -49,7 +49,7 @@ auto inicia_tabela_op(){
 	map <string, ItemTabelaDeOperacoes> tabela;
 	tabela["ADD"].opcode = "01", tabela["ADD"].n_args = 1, tabela["ADD"].memoria = 2;
 	tabela["SUB"].opcode = "02", tabela["SUB"].n_args = 1, tabela["SUB"].memoria = 2;
-	tabela["MULT"].opcode = "03", tabela["MULT"].n_args = 1, tabela["MULT"].memoria = 2;
+	tabela["MUL"].opcode = "03", tabela["MUL"].n_args = 1, tabela["MUL"].memoria = 2;
 	tabela["DIV"].opcode = "04", tabela["DIV"].n_args = 1, tabela["DIV"].memoria = 2;
 	tabela["JMP"].opcode = "05", tabela["JMP"].n_args = 1, tabela["JMP"].memoria = 2;
 	tabela["JMPN"].opcode = "06", tabela["JMPN"].n_args = 1, tabela["JMPN"].memoria = 2;
