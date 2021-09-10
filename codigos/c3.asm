@@ -2,7 +2,7 @@ SECTION TEXT
 INPUT base
 INPUT altura
 load BASE
-Mult altura
+Mul altura
 div dois
 STORE area
 OUTPUT area
