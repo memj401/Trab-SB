@@ -1,4 +1,10 @@
-/*Cabeçalho (Tem q fazer dps)*/
+/*
+Trabalho 1 Software Básico - Montador
+Aluno: Marcos Eduardo M. Junqueira
+Matrícula: 18/0023691
+Sistema Operacional: Windows 10
+Compilador: GCC/G++ versão 6.3.0 (MinGW)
+*/
 
 #include <iostream>
 #include <string>
@@ -23,7 +29,7 @@ class ItemTabelaDeSimbolos
 {
 public:
 	string simb;
-	int endr = -2; //Codigo para endereço não definido
+	int endr = -2; 
 	bool def;
 	vector<int> lista_pendencia;
 	vector <int> lista_pendencia_off;	
@@ -176,7 +182,7 @@ auto atualiza_tab_simb(auto tokens, auto tab_op, auto tab_simb,int pc, int *pos_
 			
 			if (pc == 0)
 			{	
-				tab_item.endr = -1; //codigo para endereço definido antes do trecho de codigo
+				tab_item.endr = -1; 
 				tab_item.def = false;
 			}
 			else

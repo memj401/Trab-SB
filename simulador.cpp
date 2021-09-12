@@ -1,3 +1,12 @@
+/*
+Trabalho 1 Software Básico - Simulador
+Aluno: Marcos Eduardo M. Junqueira
+Matrícula: 18/0023691
+Sistema Operacional: Windows 10
+Compilador: GCC/G++ versão 6.3.0 (MinGW)
+*/
+
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -182,10 +191,6 @@ int main(int argc, char const *argv[])
 	while(ss >> token)
 	{
 		codigo_objeto.push_back(stoi(token));
-	}
-	for (auto it : mapa_de_linhas)
-	{
-		cout << "PC: " << it.first << "--> " << "Linha: " << it.second << endl;
 	}
 	cout << endl;
 	while((pc < codigo_objeto.size() - 1) && (terminar_execucao == false))
